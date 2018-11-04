@@ -14,14 +14,12 @@ header {
 }
 
 #aside {
-  border: 1px solid #ddd;
   padding: 0;
 }
 
 #side-menu-filter {
   padding-left: 0px;
-  margin-bottom: 0px;
-  list-style: none;
+  border: 1px solid #ddd;
 }
 
 #side-menu-filter li {
@@ -75,4 +73,15 @@ header {
 
 .logged-user-links {
   color: #f1f1f1;
+}
+
+#car-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#car-info h5,
+#car-info p {
+  margin-bottom: 0px;
 }

@@ -1,31 +1,55 @@
 <?php
   require 'utils.php';
+  require 'file_upload.php';
 
   if(!userLoggedIn()) {
-    header('Location: index.php');
-    exit;
+    redirectTo('index.php');
   }
 
-  require 'connect.php';
+  $error = false;
+  
+  function insertData($car, $uploadPhoto = false) {
+    require 'connect.php';
     
-  function insertData($car, $db) {
-    $query = "INSERT INTO car (description, make, mileage, model, price, videourl, year) 
-              values (:description, :make, :mileage, :model, :price, :videourl, :year)";
-    // $statement = $db->prepare($query);
-    // $bind_values = [
-    //   ':description' => $car['description'], 
-    //   ':make' => $car['make'],
-    //   ':mileage' => $car['mileage'],
-    //   ':model' => $car['model'],
-    //   ':price' => $car['price'],
-    //   ':videourl' => $car['video-url'],
-    //   ':year' => $car['year']
-    // ];
-    // $statement->execute($bind_values);
+    $query = "INSERT INTO car (Description, Make, Mileage, Model, Price, VideoUrl, Year) 
+              values (:Description, :Make, :Mileage, :Model, :Price, :VideoUrl, :Year)";
+    $statement = $db->prepare($query);
+    $bind_values = [
+      ':Description' => $car['description'], 
+      ':Make' => $car['make'],
+      ':Mileage' => $car['mileage'],
+      ':Model' => $car['model'],
+      ':Price' => $car['price'],
+      ':VideoUrl' => $car['video-url'],
+      ':Year' => $car['year']
+    ];
+    $statement->execute($bind_values);
+    $car_id = $db->lastInsertId();
+    
+    if($uploadPhoto) {
+      $query_insert_photo = "INSERT INTO photo (CarId, Name) values (:CarId, :Name)";
+      $statement = $db->prepare($query_insert_photo);
+      $sanitized_photo_name = filter_var($_FILES['photo']['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      $bind_values = [':CarId' => $car_id, ':Name' => $sanitized_photo_name];
+      $statement->execute($bind_values);
+    }
   }
 
   if($_POST) {
-    insertData($_POST, $db);
+    $photo_upload_detected = isset($_FILES['photo']) && ($_FILES['photo']['error'] === 0);
+    
+    if($photo_upload_detected) {
+      try {
+        uploadPhoto();
+        insertData($_POST, true);
+        redirectTo('index.php');
+      } catch (Exception $e) {
+        $error = $e->getMessage();
+      }
+    } else {
+      insertData($_POST);
+      redirectTo('index.php');
+    }
   }
 ?>
 
@@ -43,7 +67,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
-  <pre><?php print_r($_POST) ?></pre>
   <div class='container'>
       <div class="row">
         <form method="post" id='new-car-form' enctype="multipart/form-data">
@@ -74,6 +97,13 @@
           <div class="form-group">
             <label for="description">Description</label>
             <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="photo">Upload Photo</label>
+            <input type="file" class="form-control-file" name="photo" id="photo">
+            <?php if($error): ?>
+              <p class='error'>Error: <?= $error ?></p>
+            <?php endif; ?>
           </div>
           <button type="submit" name="submit" class="btn btn-primary">Register Car</button>
           <a href="index.php">

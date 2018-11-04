@@ -54,6 +54,12 @@
     <div class='row' id='content'>
       <aside class='col-sm-3' id='aside'>
         <ul id='side-menu-filter'>
+          <li class="d-flex align-items-center">
+            <strong><?= count($cars) ?> found</strong>
+            <span>
+              <button class="btn btn-primary btn-sm">Clear</button>
+            </span>
+          </li>
           <li>Make<span>Any</span></li>
           <li>Model<span>Any</span></li>
           <li>Year<span>Any</span></li>

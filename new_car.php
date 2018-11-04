@@ -25,11 +25,15 @@
     ];
     $statement->execute($bind_values);
     $car_id = $db->lastInsertId();
-    
+        
     if($uploadPhoto) {
+      $sanitized_photo_name = filter_var($_FILES['photo']['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      mkdir("photos/$car_id"); // Create directory with the id of the new car
+      // Move car photos to the directory with its id
+      rename("photos/$sanitized_photo_name", "photos/" . $car_id . "/" . $sanitized_photo_name);
+
       $query_insert_photo = "INSERT INTO photo (CarId, Name) values (:CarId, :Name)";
       $statement = $db->prepare($query_insert_photo);
-      $sanitized_photo_name = filter_var($_FILES['photo']['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
       $bind_values = [':CarId' => $car_id, ':Name' => $sanitized_photo_name];
       $statement->execute($bind_values);
     }

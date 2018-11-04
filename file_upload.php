@@ -1,8 +1,8 @@
 <?php
-function uploadPhoto() {
+  function uploadPhoto() {
     $target_dir = "photos/";
     $target_file = $target_dir . basename($_FILES["photo"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $image_file_type = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
     // Check if image file is a actual image or fake image
     $check = getimagesize($_FILES["photo"]["tmp_name"]);
@@ -23,7 +23,7 @@ function uploadPhoto() {
 
     // Allow certain file formats
     $allowed_file_extensions = ['jpg', 'jpeg', 'png'];
-    if(!in_array($imageFileType, $allowed_file_extensions)) {
+    if(!in_array($image_file_type, $allowed_file_extensions)) {
       throw new Exception('Sorry, only JPG, JPEG or PNG files are allowed.');
     }
 

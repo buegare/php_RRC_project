@@ -68,7 +68,7 @@
             <?php $photo = getPhoto($car["Id"], $db)?>
             <div class='col-sm-3' id='image'>
               <a href="">
-                <img src="photos/<?= $photo ? $photo["Name"] : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='car-photo'>
+                <img src="photos/<?= $car["Id"] ?>/<?= $photo ? $photo["Name"] : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='car-photo'>
               </a>
             </div>
             <div class='col-sm-7' id='car-info'>

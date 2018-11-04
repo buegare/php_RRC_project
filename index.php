@@ -2,15 +2,13 @@
   require 'connect.php';
   require 'utils.php';
 
-  session_start();
-
   $select_query = 'SELECT * FROM car';
   $statement = $db->prepare($select_query);
   $statement->execute();
   $cars = $statement->fetchAll();
 
   function getPhoto($id, $db) {
-    $select_query = 'SELECT Name, Extension FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = ' . $id . ' LIMIT 1';
+    $select_query = 'SELECT Name FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = ' . $id . ' LIMIT 1';
     $statement = $db->prepare($select_query);
     $statement->execute();
     $photo = $statement->fetch();
@@ -70,7 +68,7 @@
             <?php $photo = getPhoto($car["Id"], $db)?>
             <div class='col-sm-3' id='image'>
               <a href="">
-                <img src="photos/<?= $photo["Name"] ?>.<?= $photo["Extension"] ?>" alt="<?= $photo["Name"] ?>" class='car-photo'>
+                <img src="photos/<?= $photo ? $photo["Name"] : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='car-photo'>
               </a>
             </div>
             <div class='col-sm-7'>

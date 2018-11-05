@@ -73,12 +73,12 @@
           <div class='row' id='car-line'>
             <?php $photo = getPhoto($car["Id"], $db)?>
             <div class='col-sm-3' id='image'>
-              <a href="">
+              <a href="show.php?id=<?= $car["Id"] ?>">
                 <img src="photos/<?= $car["Id"] ?>/<?= $photo ? $photo["Name"] : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='car-photo'>
               </a>
             </div>
             <div class='col-sm-7' id='car-info'>
-              <h5><a href=""><strong><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></strong></a></h5>
+              <h5><a href="show.php?id=<?= $car["Id"] ?>"><strong><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></strong></a></h5>
               <p>
                 <?= strlen($car["Description"]) >= 117 ? 
                 substr($car["Description"], 0, 117) . "..." : 
@@ -87,10 +87,37 @@
               </p>
               <p><strong>Mileage</strong> <?= $car["Mileage"] ?> km</p>
             </div>
-            <div class='col-sm-2'>
+            <div class='col-sm-2' id="car-price">
               <strong>$<?= $car["Price"] ?></strong>
               <?php if(userLoggedIn()): ?>
-                <button type="submit" class='btn btn-danger'>Delete</button>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCarModal<?= $car["Id"] ?>">
+                  Delete
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModalTitle<?= $car["Id"] ?>" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this car?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body d-flex justify-content-around">
+                        <img src="photos/<?= $car["Id"] ?>/<?= $photo ? $photo["Name"] : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='car-photo'>
+                        <h5><strong><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></strong></h5>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <a href='delete.php?id=<?= $car["Id"] ?>'>
+                          <button type="button" class="btn btn-danger">Delete</button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <?php endif;?>
             </div>
           </div>

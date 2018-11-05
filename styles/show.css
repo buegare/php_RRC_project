@@ -1,0 +1,89 @@
+#wrapper {
+  max-width: 685px;
+  margin: 0 auto;
+}
+
+#buttons {
+  padding-bottom: 15px;
+}
+
+#title {
+  padding: 15px;
+  border: 1px solid #ddd;
+  background: cornflowerblue;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+#car-photo-featured {
+  width: 420px;
+}
+
+.car-photos {
+  width: 96px;
+}
+
+#photo-section {
+  border: #ddd solid 1px;
+  padding: 20px 0 20px 20px;
+  background: aliceblue;
+}
+
+#photo-section div:last-of-type {
+  height: 320px;
+  overflow-y: scroll;
+  padding: 0;
+}
+
+.container {
+  margin: 20px auto;
+}
+
+#mileage {
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  padding: 15px;
+  background: aliceblue;
+}
+
+#description {
+  margin-top: 5px;
+}
+
+#description-title {
+  padding: 15px;
+  border: 1px solid #ddd;
+  background: cornflowerblue;
+}
+
+#description-body {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 20px;
+}
+
+#video-review {
+  margin-top: 5px;
+}
+
+#video-review-title {
+  padding: 15px;
+  border: 1px solid #ddd;
+  background: cornflowerblue;
+}
+
+#video-review-body {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 20px;
+}
+
+#delete-car-photo {
+  height: 90px;
+  border: 2px solid black;
+}

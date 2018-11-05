@@ -63,7 +63,7 @@ header {
   padding: 10px;
 }
 
-#car-line div:last-child {
+#car-price {
   display: flex;
   justify-content: space-around;
   align-items: center;

@@ -46,11 +46,18 @@
           <?php if(userLoggedIn()): ?>
             <!-- Button trigger modal -->
             <div class="row">
-              <div class="col-sm-12 d-flex justify-content-end" id="buttons">
+              <div class="col-sm-12 d-flex justify-content-between" id="buttons">
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCarModal<?= $car["Id"] ?>">
                   Delete
                 </button>
-
+                <div>
+                  <a href="edit.php?id=<?= $car["Id"] ?>">
+                    <button type="button" class="btn btn-primary">Edit</button>
+                  </a>
+                  <a href="index.php">
+                    <button type="button" class="btn btn-secondary">Cancel</button>
+                  </a>
+                </div>
                 <!-- Modal -->
                 <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModalTitle<?= $car["Id"] ?>" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -87,9 +94,9 @@
             <div class="col-sm-8">
               <img id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" id="photo-thumbnail">
               <?php for ($i=1; $i < count($photos); $i++): ?> 
-                <img class="car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
+                <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
               <?php endfor; ?>
             </div>
           </div>

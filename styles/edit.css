@@ -1,0 +1,68 @@
+input[type="text"],
+input[type="number"] {
+  border: none;
+  background: transparent;
+  color: #000;
+  outline: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.font-weight-500 {
+  font-weight: 500;
+}
+
+#price,
+#mil {
+  width: 55px;
+}
+
+#description textarea {
+  border: none;
+  outline: none;
+  min-height: 500px;
+  width: -webkit-fill-available;
+  resize: none;
+  overflow: hidden;
+}
+
+#video-review-url {
+  width: 350px;
+  color: #f1f1f1;
+}
+
+#video-review-url::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #f1f1f1;
+  opacity: 1; /* Firefox */
+}
+
+#video-review-url:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #f1f1f1;
+}
+
+#video-review-url::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #f1f1f1;
+}
+
+#year {
+  width: 60px;
+}
+
+#make {
+  width: 122px;
+}
+
+#model {
+  width: 346px;
+}
+
+.error {
+  color: red;
+}

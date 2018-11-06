@@ -21,6 +21,7 @@
 
 .car-photos {
   width: 96px;
+  padding: 1px;
 }
 
 #photo-section {
@@ -29,7 +30,7 @@
   background: aliceblue;
 }
 
-#photo-section div:last-of-type {
+#photo-section #photo-thumbnail {
   height: 320px;
   overflow-y: scroll;
   padding: 0;

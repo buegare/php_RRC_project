@@ -44,7 +44,7 @@
   }
 
   if($_POST) {
-    if(isset($_FILES['photo'])) {
+    if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
       try {
         uploadPhoto();
         insertData($_POST, true);

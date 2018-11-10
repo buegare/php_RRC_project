@@ -11,16 +11,16 @@
   function insertData($car, $uploadPhoto = false) {
     require 'connect.php';
     
-    $query = "INSERT INTO car (Description, Make, Mileage, Model, Price, VideoUrl, Year) 
-              values (:Description, :Make, :Mileage, :Model, :Price, :VideoUrl, :Year)";
+    $query = "INSERT INTO Car (Description, Make, Mileage, Model, Price, VideoUrl, Year) 
+              VALUES (:Description, :Make, :Mileage, :Model, :Price, :VideoUrl, :Year)";
     $statement = $db->prepare($query);
     $bind_values = [
-      ':Description' => $car['description'], 
+      ':Description' => $car['desc'], 
       ':Make' => $car['make'],
-      ':Mileage' => $car['mileage'],
+      ':Mileage' => $car['mil'],
       ':Model' => $car['model'],
       ':Price' => $car['price'],
-      ':VideoUrl' => $car['video-url'],
+      ':VideoUrl' => $car['video-review-url'],
       ':Year' => $car['year']
     ];
     $statement->execute($bind_values);
@@ -53,7 +53,7 @@
         $error = $e->getMessage();
       }
     } else {
-      insertData($_POST);
+      insertData($_FILES);
       redirectTo('index.php');
     }
   }
@@ -66,7 +66,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Geske Automotive Group</title>
-  <link rel="stylesheet" href="styles/new_car.css">
+  <link rel="stylesheet" href="styles/show.css">
+  <link rel="stylesheet" href="styles/edit.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -74,53 +75,100 @@
   <script src="js/new_car.js"></script>
 </head>
 <body>
-  <div class='container'>
-      <div class="row">
+    <pre><?php print_r($_POST);?></pre>
+  <pre><?php print_r($_FILES);?></pre>
+  <div class="container">
+    <div class="row" id="wrapper">
+      <div class="col-sm-12">
+
         <form method="post" id='new-car-form' enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="make">Make</label>
-            <input type="text" class="form-control" name="make" id="make">
+          
+          <!-- Start buttons -->
+          <div class="row">
+            <div class="col-sm-12 d-flex justify-content-between" id="buttons">
+              <button type="submit" class="btn btn-success">Register Car</button>
+              
+              <a href="index.php">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+              </a>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="model">Model</label>
-            <input type="text" class="form-control" name="model" id="model">
-          </div>
-          <div class="form-group">
-            <label for="year">Year</label>
-            <input type="number" class="form-control" name="year" id="year">
-          </div>
-          <div class="form-group">
-            <label for="mileage">Mileage</label>
-            <input type="number" class="form-control" name="mileage" id="mileage">
-          </div>
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" name="price" id="price">
-          </div>
-          <div class="form-group">
-            <label for="video-url">Video URL</label>
-            <input type="url" class="form-control" name="video-url" id="video-url">
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="photo">Upload Photo</label>
-            <input type="file" class="form-control-file" name="photo[]" id="photo" multiple>
-            <?php if($error): ?>
-              <p class='error'>Error: <?= $error ?></p>
-            <?php endif; ?>
-          </div>
+          <!-- End buttons -->
+        
+          <!-- Start Car info and price -->
+          <div class="row">
+            <div class="col-sm-12 d-flex align-items-center justify-content-between" id="title">
+              <h3>
+                <input autocomplete="off" class="font-weight-500" type="text" name="year" id="year" placeholder="Year">
+                <input autocomplete="off" class="font-weight-500" type="text" name="make" id="make"  placeholder="Make">
+                <input autocomplete="off" class="font-weight-500" type="text" name="model" id="model"  placeholder="Model">
+              </h3>
 
-          <div class="d-flex" id="photo_preview"></div>
+              <span>
+                <strong>Price: </strong>$<input autocomplete="off" type="number" name="price" id="price" value="0">
+              </span>
+            </div>
+          </div>
+          <!-- End Car info and price -->
+        
+          <!-- Start Car photos section -->
+          <div class="row justify-content-center" id="photo-section">
+            <div class="col-sm-8" id="car-photo-featured-section">
+              <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
+              <?php if($error): ?>
+                <span class='error'>Error: <?= $error ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="col-sm-4" id="photo-thumbnail">
+            </div>
+          </div>
+          <!-- End Car photos section -->
 
-          <button type="submit" name="submit" class="btn btn-primary">Register Car</button>
-          <a href="index.php">
-            <button type="button" class="btn btn-secondary float-right">Cancel</button>
-          </a>
+          <!-- Start mileage -->
+          <div class="row">
+            <div class="col-sm-12 d-flex justify-content-between align-items-center" id="mileage">
+              <span>
+                <strong>Mileage: </strong><input autocomplete="off" type="number" name="mil" id="mil" value="0"> km
+              </span>
+              <div>
+                <input type="file" class="form-control-file" name="photo[]" id="photo" multiple>
+              </div>
+            </div>
+          </div>
+          <!-- End mileage -->
+
+          <!-- Start description section -->
+          <div class="row" id="description">
+            <div class="col-sm-12" id="description-title">
+              <strong>Description</strong>
+            </div>
+            <div class="col-sm-12" id="description-body">
+                <p><textarea placeholder="Enter a description for the car" name="desc" id="desc"></textarea></p>
+            </div>
+          </div>
+          <!-- End description section -->
+
+          <!-- Start review video section -->
+          <div class="row" id="video-review">
+            <div class="col-sm-12 d-flex justify-content-between" id="video-review-title">
+              <span><strong>Video Review</strong></span>
+              <div>
+                <button type="button" id="apply-btn" class="btn btn-success btn-sm disabled">apply</button>
+                <input autocomplete="off" type="text" name="video-review-url" id="video-review-url" placeholder="Enter a video review URL">
+              </div>
+            </div>
+            <div class="col-sm-12" id="video-review-body">
+              <div class="embed-responsive embed-responsive-4by3">
+                <iframe id="video-review-iframe" class="embed-responsive-item" src="" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+          <!-- End review video section -->
+
         </form>
+      
       </div>
+    </div>
   </div>
 </body>
 </html>

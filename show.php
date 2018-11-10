@@ -35,8 +35,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
-  <!-- <pre><?php print_r($car);?></pre> -->
-  <!-- <pre><?php print_r($photos);?></pre> -->
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
@@ -44,7 +42,8 @@
           <h3>There is no car with this id</h3>
         <?php else: ?>
           <?php if(userLoggedIn()): ?>
-            <!-- Button trigger modal -->
+          <!-- Start buttons -->  
+          <!-- Button trigger modal -->
             <div class="row">
               <div class="col-sm-12 d-flex justify-content-between" id="buttons">
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCarModal<?= $car["Id"] ?>">
@@ -69,7 +68,7 @@
                         </button>
                       </div>
                       <div class="modal-body d-flex justify-content-around">
-                        <img id="delete-car-photo" src="photos/<?= $car["Id"] ?>/<?= $photos ? $photos[0]["Name"] : 'image-placeholder.png' ?>" alt="<?= $photos ? $photos[0]["Name"] : 'No car image available' ?>" class='car-photo'>
+                        <img id="delete-car-photo" src="photos/<?= $photos ? $car["Id"] . "/" . $photos[0]['Name']  : 'image-placeholder.png' ?>" alt="<?= $photos ? $photos[0]["Name"] : 'No car image available' ?>" class='car-photo'>
                         <h5><strong><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></strong></h5>
                       </div>
                       <div class="modal-footer">
@@ -83,13 +82,18 @@
                 </div>
               </div>
             </div>
+          <!-- End buttons -->
           <?php endif;?>
+          <!-- Start car info and price -->
           <div class="row">
             <div class="col-sm-12 d-flex align-items-center justify-content-between" id="title">
               <h3><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></h3>
               <span><strong>Price: </strong>$<?= $car["Price"] ?></span>
             </div>
           </div>
+          <!-- Start car info and price -->
+          
+          <!-- Start photo section -->
           <div class="row justify-content-center" id="photo-section">
             <div class="col-sm-8">
               <?php if($photos): ?>
@@ -106,11 +110,17 @@
               <?php endif; ?>
             </div>
           </div>
+          <!-- Dnd photo section -->
+
+          <!-- Start mileage section -->
           <div class="row">
             <div class="col-sm-12 align-items-center" id="mileage">
               <span><strong>Mileage: </strong><?= $car["Mileage"] ?> km</span>
             </div>
           </div>
+          <!-- Start mileage section -->
+
+          <!-- Start description -->
           <div class="row" id="description">
             <div class="col-sm-12" id="description-title">
               <strong>Description</strong>
@@ -123,6 +133,9 @@
               <?php endif; ?>
             </div>
           </div>
+          <!-- End description -->
+
+          <!-- Start video review -->
           <div class="row" id="video-review">
             <div class="col-sm-12" id="video-review-title">
               <strong>Video Review</strong>
@@ -137,6 +150,8 @@
               <?php endif; ?>
             </div>
           </div>
+          <!-- End video review -->
+
         </div>
       <?php endif; ?>
     </div>

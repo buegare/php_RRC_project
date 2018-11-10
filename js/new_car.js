@@ -1,12 +1,42 @@
 "use strict";
 
+const enableApplyButton = () => {
+  let applyButton = document.getElementById("apply-btn");
+  applyButton.classList.remove("disabled");
+};
+
+const applyNewURL = () => {
+  let iframe = document.getElementById("video-review-iframe");
+  let url = document.getElementById("video-review-url").value;
+  iframe.src = url;
+};
+
 const preview_images = () => {
   let total_file = document.getElementById("photo").files.length;
-  for (let i = 0; i < total_file; i++) {
-    $("#photo_preview").append(
-      "<div><img class='img-responsive' src='" +
+
+  // Remove featured car photo
+  document.getElementById("car-photo-featured").remove();
+
+  // Remove thumbnail photos
+  let photo_section = document.getElementById("photo-thumbnail");
+
+  while (photo_section.firstChild) {
+    photo_section.removeChild(photo_section.firstChild);
+  }
+
+  //Append uploaded featured car photo
+  $("#car-photo-featured-section").append(
+    "<img class='img-fluid' id='car-photo-featured' alt='uploaded_photo' src='" +
+      URL.createObjectURL(event.target.files[0]) +
+      "'>"
+  );
+
+  // Append uploaded thumbnail photos
+  for (let i = 1; i < total_file; i++) {
+    $("#photo-thumbnail").append(
+      "<img class='img-fluid car-photos' alt='uploaded_photo' src='" +
         URL.createObjectURL(event.target.files[i]) +
-        "'></div>"
+        "'>"
     );
   }
 };
@@ -15,6 +45,11 @@ const preview_images = () => {
  * Handles the load event of the document.
  */
 function load() {
+  document
+    .getElementById("video-review-url")
+    .addEventListener("keyup", enableApplyButton);
+
+  document.getElementById("apply-btn").addEventListener("click", applyNewURL);
   document.getElementById("photo").addEventListener("change", preview_images);
 }
 

@@ -31,14 +31,18 @@
     ]);
         
     if($uploadPhoto) {
-      $query_delete_photos = "DELETE FROM Photo WHERE CarId = :id";
-      $statement = $db->prepare($query_delete_photos);
-      $statement->bindValue(':id', $id, PDO::PARAM_INT);
-      $statement->execute();
+      if($photos) { // Check if car has photos
+        $query_delete_photos = "DELETE FROM Photo WHERE CarId = :id";
+        $statement = $db->prepare($query_delete_photos);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        // Deletes all files in directory
+        array_map('unlink', glob("photos/$id/*"));
+      } else {
+        mkdir("photos/$id"); // Create directory with the id of the new car
+      }
     
-      // Deletes all files in directory
-      array_map('unlink', glob("photos/$id/*"));
-      
       foreach ($_FILES['photo']['name'] as $photo) {
         $sanitized_photo_name = filter_var($photo, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
@@ -137,15 +141,21 @@
             <!-- Start Car photos section -->
             <div class="row justify-content-center" id="photo-section">
               <div class="col-sm-8" id="car-photo-featured-section">
-                <img class="img-fluid" id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+                <?php if($photos): ?>
+                  <img class="img-fluid" id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+                <?php else: ?>
+                  <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
+                <?php endif; ?>
                 <?php if($error): ?>
                   <span class='error'>Error: <?= $error ?></span>
                 <?php endif; ?>
               </div>
               <div class="col-sm-4" id="photo-thumbnail">
-                <?php for ($i=1; $i < count($photos); $i++): ?>
-                  <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
-                <?php endfor; ?>
+                <?php if($photos): ?>
+                  <?php for ($i=1; $i < count($photos); $i++): ?>
+                    <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
+                  <?php endfor; ?>
+                <?php endif; ?>
               </div>
             </div>
             <!-- End Car photos section -->

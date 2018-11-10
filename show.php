@@ -35,8 +35,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </head>
 <body>
-  <!-- <pre><?php print_r($car);?></pre>
-  <pre><?php print_r($photos);?></pre> -->
+  <!-- <pre><?php print_r($car);?></pre> -->
+  <!-- <pre><?php print_r($photos);?></pre> -->
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
@@ -92,12 +92,18 @@
           </div>
           <div class="row justify-content-center" id="photo-section">
             <div class="col-sm-8">
-              <img id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+              <?php if($photos): ?>
+                <img id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+              <?php else: ?>
+                <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
+              <?php endif; ?>
             </div>
             <div class="col-sm-4" id="photo-thumbnail">
-              <?php for ($i=1; $i < count($photos); $i++): ?> 
-                <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
-              <?php endfor; ?>
+              <?php if($photos): ?>
+                <?php for ($i=1; $i < count($photos); $i++): ?> 
+                  <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
+                <?php endfor; ?>
+              <?php endif; ?>
             </div>
           </div>
           <div class="row">

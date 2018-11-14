@@ -53,7 +53,7 @@
         $error = $e->getMessage();
       }
     } else {
-      insertData($_FILES);
+      insertData($_POST);
       redirectTo('index.php');
     }
   }

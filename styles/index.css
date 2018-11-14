@@ -48,14 +48,14 @@ header {
   left: 10px;
 }
 
-#car-line {
+.car-line {
   border: 1px solid #ddd;
   background: aliceblue;
   margin-right: -5px;
   margin-bottom: 10px;
 }
 
-#image {
+.image {
   border-right: 1px solid #ddd;
   display: flex;
   justify-content: center;
@@ -75,13 +75,13 @@ header {
   color: #f1f1f1;
 }
 
-#car-info {
+.car-info {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
-#car-info h5,
-#car-info p {
+.car-info h5,
+.car-info p {
   margin-bottom: 0px;
 }

@@ -26,7 +26,6 @@
   <script src="js/index.js"></script>
 </head>
 <body>
-  <pre><?php print_r($_GET) ?></pre>
   <div class='container'>
     <header class='row'>
       <div class='col-sm-2'>Geske Automotive Group</div>

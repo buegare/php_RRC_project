@@ -1,8 +1,9 @@
 <?php
   require 'connect.php';
   require 'utils.php';
+  require 'validate_form.php';
 
-  $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+  $id = validateInt($_GET["id"]);
 
   if(!userLoggedIn() || !$id) {
     redirectTo('index.php');

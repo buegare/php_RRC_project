@@ -1,12 +1,40 @@
 <?php
   require 'utils.php';
   require 'file_upload.php';
+  require 'validate_form.php';
 
   if(!userLoggedIn()) {
     redirectTo('index.php');
   }
 
-  $error = false;
+  $submission_errors = [];
+  $photo_error = false;
+
+  if($_POST) {
+    array_push($submission_errors, validateField($_POST["make"]));
+    array_push($submission_errors, validateField($_POST["mil"], false,
+      array("options" => array("min_range" => 0))));
+    array_push($submission_errors, validateField($_POST["model"]));
+    array_push($submission_errors, validateField($_POST["price"], false,
+      array("options" => array("min_range" => 0))));
+    array_push($submission_errors, validateField($_POST["year"], false,
+      array("options" => array("min_range" => 1950, "max_range" => date("Y") + 1))));
+
+    if (empty(array_filter($submission_errors))) {
+      try {
+        if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
+          uploadPhoto();
+          insertData($_POST, true);
+        } else {
+          insertData($_POST);
+        }
+        redirectTo('index.php');
+      } catch (Exception $e) {
+        $photo_error = $e->getMessage();
+      }
+    }
+
+  }
   
   function insertData($car, $uploadPhoto = false) {
     require 'connect.php';
@@ -15,12 +43,12 @@
               VALUES (:Description, :Make, :Mileage, :Model, :Price, :VideoUrl, :Year)";
     $statement = $db->prepare($query);
     $bind_values = [
-      ':Description' => $car['desc'], 
+      ':Description' => sanitizeString($car['desc']), 
       ':Make' => $car['make'],
       ':Mileage' => $car['mil'],
       ':Model' => $car['model'],
       ':Price' => $car['price'],
-      ':VideoUrl' => $car['video-review-url'],
+      ':VideoUrl' => sanitizeString($car['video-review-url']),
       ':Year' => $car['year']
     ];
     $statement->execute($bind_values);
@@ -30,7 +58,7 @@
       mkdir("photos/$car_id"); // Create directory with the id of the new car
       
       foreach ($_FILES['photo']['name'] as $photo) {
-        $sanitized_photo_name = filter_var($photo, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $sanitized_photo_name = sanitizeString($photo);
 
         // Move car photos to the directory with its id
         rename("photos/$sanitized_photo_name", "photos/" . $car_id . "/" . $sanitized_photo_name);
@@ -40,21 +68,6 @@
         $bind_values = [':CarId' => $car_id, ':Name' => $sanitized_photo_name];
         $statement->execute($bind_values);
       }
-    }
-  }
-
-  if($_POST) {
-    if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
-      try {
-        uploadPhoto();
-        insertData($_POST, true);
-        redirectTo('index.php');
-      } catch (Exception $e) {
-        $error = $e->getMessage();
-      }
-    } else {
-      insertData($_POST);
-      redirectTo('index.php');
     }
   }
 ?>
@@ -75,18 +88,40 @@
   <script src="js/new_car.js"></script>
 </head>
 <body>
-    <pre><?php print_r($_POST);?></pre>
-  <pre><?php print_r($_FILES);?></pre>
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
 
         <form method="post" id='new-car-form' enctype="multipart/form-data">
           
+          <!-- Start errors panel -->
+          <?php if(!empty(array_filter($submission_errors))): ?>
+            <div class="row" id="errors-panel">
+              <div class="col-sm-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <strong>There was a problem with your form submission!</strong>
+                  <hr>
+                  <p>These are the requirements for some of the fields:</p>
+                  <ul>
+                    <li>Year is required and should be between 1950 and next year.</li>
+                    <li>Make is required.</li>
+                    <li>Model is required.</li>
+                    <li>Price is required and should be greater than 0.</li>
+                    <li>Mileage is required and should be greater or equal 0.</li>
+                  </ul>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+          <!-- End errors panel -->
+
           <!-- Start buttons -->
           <div class="row">
             <div class="col-sm-12 d-flex justify-content-between" id="buttons">
-              <button type="submit" class="btn btn-success">Register Car</button>
+              <button type="submit" id="submit" class="btn btn-success">Register Car</button>
               
               <a href="index.php">
                 <button type="button" class="btn btn-secondary">Cancel</button>
@@ -99,7 +134,7 @@
           <div class="row">
             <div class="col-sm-12 d-flex align-items-center justify-content-between" id="title">
               <h3>
-                <input autocomplete="off" class="font-weight-500" type="text" name="year" id="year" placeholder="Year">
+                <input autocomplete="off" class="font-weight-500" type="text" name="year" id="year" placeholder="Year" autofocus>
                 <input autocomplete="off" class="font-weight-500" type="text" name="make" id="make"  placeholder="Make">
                 <input autocomplete="off" class="font-weight-500" type="text" name="model" id="model"  placeholder="Model">
               </h3>
@@ -115,8 +150,8 @@
           <div class="row justify-content-center" id="photo-section">
             <div class="col-sm-8" id="car-photo-featured-section">
               <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
-              <?php if($error): ?>
-                <span class='error'>Error: <?= $error ?></span>
+              <?php if($photo_error): ?>
+                <span class='error'>Error: <?= $photo_error ?></span>
               <?php endif; ?>
             </div>
             <div class="col-sm-4" id="photo-thumbnail">

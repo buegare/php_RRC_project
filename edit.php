@@ -2,9 +2,11 @@
   require 'connect.php';
   require 'utils.php';
   require 'file_upload.php';
+  require 'validate_form.php';
 
-  $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-  $error = false;
+  $id = validateInt($_GET["id"]);
+  $submission_errors = [];
+  $photo_error = false;
 
   if(!userLoggedIn() || !$id) {
     redirectTo('index.php');
@@ -44,7 +46,7 @@
       }
     
       foreach ($_FILES['photo']['name'] as $photo) {
-        $sanitized_photo_name = filter_var($photo, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $sanitized_photo_name = sanitizeString($photo);
 
         // Move car photos to the directory with its id
         rename("photos/$sanitized_photo_name", "photos/" . $id . "/" . $sanitized_photo_name);
@@ -58,28 +60,38 @@
   }
 
   if($_POST) {
-    $updated_car = [];
-    $updated_car["year"] = $_POST["year"];
-    $updated_car["make"] = $_POST["make"];
-    $updated_car["model"] = $_POST["model"];
-    $updated_car["description"] = $_POST["desc"];
-    $updated_car["price"] = $_POST["price"];
-    $updated_car["mileage"] = $_POST["mil"];
-    $updated_car["video-url"] = $_POST["video-review-url"];
+    array_push($submission_errors, validateField($_POST["make"]));
+    array_push($submission_errors, validateField($_POST["mil"], false,
+      array("options" => array("min_range" => 0))));
+    array_push($submission_errors, validateField($_POST["model"]));
+    array_push($submission_errors, validateField($_POST["price"], false,
+      array("options" => array("min_range" => 0))));
+    array_push($submission_errors, validateField($_POST["year"], false,
+      array("options" => array("min_range" => 1950, "max_range" => date("Y") + 1))));
 
-    if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
+    if (empty(array_filter($submission_errors))) {
+      $updated_car = [];
+      $updated_car["year"] = $_POST["year"];
+      $updated_car["make"] = $_POST["make"];
+      $updated_car["model"] = $_POST["model"];
+      $updated_car["description"] = sanitizeString($_POST["desc"]);
+      $updated_car["price"] = $_POST["price"];
+      $updated_car["mileage"] = $_POST["mil"];
+      $updated_car["video-url"] = sanitizeString($_POST["video-review-url"]);
+
       try {
-        uploadPhoto();
-        updateData($updated_car, $db, $id, true);
+        if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
+          uploadPhoto();
+          updateData($updated_car, $db, $id, true);
+        } else {
+          updateData($updated_car, $db, $id);
+        }
         redirectTo('index.php');
       } catch (Exception $e) {
-        $error = $e->getMessage();
+        $photo_error = $e->getMessage();
       }
-    } else {
-      updateData($updated_car, $db, $id);
-      redirectTo('index.php');
-    }
 
+    }
   }  
 ?>
 
@@ -107,6 +119,30 @@
         <?php else: ?>
 
           <form method="post" enctype="multipart/form-data">
+
+            <!-- Start errors panel -->
+            <?php if(!empty(array_filter($submission_errors))): ?>
+              <div class="row" id="errors-panel">
+                <div class="col-sm-12">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>There was a problem with your form submission!</strong>
+                    <hr>
+                    <p>These are the requirements for some of the fields:</p>
+                    <ul>
+                      <li>Year is required and should be between 1950 and next year.</li>
+                      <li>Make is required.</li>
+                      <li>Model is required.</li>
+                      <li>Price is required and should be greater than 0.</li>
+                      <li>Mileage is required and should be greater or equal 0.</li>
+                    </ul>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <?php endif; ?>
+            <!-- End errors panel -->
 
             <!-- Start buttons -->
             <div class="row">
@@ -146,8 +182,8 @@
                 <?php else: ?>
                   <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
                 <?php endif; ?>
-                <?php if($error): ?>
-                  <span class='error'>Error: <?= $error ?></span>
+                <?php if($photo_error): ?>
+                  <span class='error'>Error: <?= $photo_error ?></span>
                 <?php endif; ?>
               </div>
               <div class="col-sm-4" id="photo-thumbnail">

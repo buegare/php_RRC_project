@@ -1,8 +1,9 @@
 <?php
   require 'connect.php';
   require 'utils.php';
+  require 'validate_form.php';
 
-  $sanitized_sort_option = filter_input(INPUT_GET, 'sort_by', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  $sanitized_sort_option = sanitizeString($_GET["sort_by"]);
   $select_query = "";
   $car_photo = "";
 

@@ -23,7 +23,6 @@
     if (empty(array_filter($submission_errors))) {
       try {
         if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
-          uploadPhoto();
           insertData($_POST, true);
         } else {
           insertData($_POST);
@@ -55,19 +54,7 @@
     $car_id = $db->lastInsertId();
         
     if($uploadPhoto) {
-      mkdir("photos/$car_id"); // Create directory with the id of the new car
-      
-      foreach ($_FILES['photo']['name'] as $photo) {
-        $sanitized_photo_name = sanitizeString($photo);
-
-        // Move car photos to the directory with its id
-        rename("photos/$sanitized_photo_name", "photos/" . $car_id . "/" . $sanitized_photo_name);
-        
-        $query_insert_photo = "INSERT INTO photo (CarId, Name) values (:CarId, :Name)";
-        $statement = $db->prepare($query_insert_photo);
-        $bind_values = [':CarId' => $car_id, ':Name' => $sanitized_photo_name];
-        $statement->execute($bind_values);
-      }
+      uploadPhoto($car_id);
     }
   }
 ?>
@@ -88,6 +75,8 @@
   <script src="js/new_car.js"></script>
 </head>
 <body>
+<pre><?php print_r($_POST)?></pre>
+<pre><?php print_r($_FILES)?></pre>
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">

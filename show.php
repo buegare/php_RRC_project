@@ -14,7 +14,7 @@
   $statement->execute(); 
   $car = $statement->fetch();
 
-  $select_photos_query = 'SELECT Name FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = ' . $id;
+  $select_photos_query = "SELECT Name FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = {$id} AND p.Name LIKE 'thumbnail_%'";
   $statement = $db->prepare($select_photos_query);
   $statement->execute();
   $photos = $statement->fetchAll();
@@ -68,7 +68,8 @@
                         </button>
                       </div>
                       <div class="modal-body d-flex justify-content-around">
-                        <img id="delete-car-photo" src="photos/<?= $photos ? $car["Id"] . "/" . $photos[0]['Name']  : 'image-placeholder.png' ?>" alt="<?= $photos ? $photos[0]["Name"] : 'No car image available' ?>" class='car-photo'>
+                        <?php $photo = getPhoto($car["Id"], $db, "index_"); ?>
+                        <img id="delete-car-photo" src="photos/<?= $photo ? $car["Id"] . "/" . $photo['Name']  : 'image-placeholder.png' ?>" alt="<?= $photo ? $photo["Name"] : 'No car image available' ?>" class='image-placeholder-size'>
                         <h5><strong><?= $car["Year"] ?> <?= $car["Make"] ?> <?= $car["Model"] ?></strong></h5>
                       </div>
                       <div class="modal-footer">
@@ -96,21 +97,22 @@
           <!-- Start photo section -->
           <div class="row justify-content-center" id="photo-section">
             <div class="col-sm-8">
-              <?php if($photos): ?>
-                <img id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+              <?php $photo = getPhoto($car["Id"], $db, "featured_"); ?>
+              <?php if($photo): ?>
+                <img src="photos/<?= $car["Id"] ?>/<?= $photo["Name"] ?>" alt="<?= $photo["Name"] ?>">
               <?php else: ?>
-                <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
+                <img src="photos/image-placeholder.png" alt="No car image available" id='image-placeholder-size'>
               <?php endif; ?>
             </div>
             <div class="col-sm-4" id="photo-thumbnail">
               <?php if($photos): ?>
-                <?php for ($i=1; $i < count($photos); $i++): ?> 
-                  <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
+                <?php for ($i=0; $i < count($photos); $i++): ?> 
+                  <img class="img-fluid" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
                 <?php endfor; ?>
               <?php endif; ?>
             </div>
           </div>
-          <!-- Dnd photo section -->
+          <!-- End photo section -->
 
           <!-- Start mileage section -->
           <div class="row">

@@ -1,18 +1,19 @@
 <?php
   require 'vendor/gumlet/php-image-resize/lib/ImageResize.php';
+  require 'vendor/gumlet/php-image-resize/lib/ImageResizeException.php';
 
   use Gumlet\ImageResize;
   use Gumlet\ImageResizeException;
 
-  function imageResize($original_image, $size, $new_filename) {
-    echo "Original image {$original_image} <br>";
-    echo "new file name {$new_filename} <br>";
+  function imageResize($original_image, $size, $new_filename, $car_id) {
     $image = new ImageResize($original_image);
     $image->resizeToHeight($size);
-    $image->save('photos/' . $new_filename);
+    $image->save("photos/{$car_id}/{$new_filename}");
   }
 
-  function uploadPhoto() {
+  function uploadPhoto($car_id) {
+    require 'connect.php';
+
     $target_dir = "photos/";
     $allowed_file_extensions = ['jpg', 'jpeg', 'png'];
 
@@ -39,20 +40,33 @@
       }
     }
 
-    // Upload files only if all photos are valid
-    foreach ($photos as $photo) {
-      $target_file = $target_dir . basename($photo["name"]);
-      // move_uploaded_file($photo["tmp_name"], $target_file);
-      imageResize($photo["tmp_name"], 90, "index_" . basename($photo["name"]));
-      imageResize($photo["tmp_name"], 309, "featured_" . basename($photo["name"]));
-      imageResize($photo["tmp_name"], 72, "thumbnail_" . basename($photo["name"]));
+    // When creating a new car, create directory with the id of the car
+    if(!file_exists("photos/$car_id")) {
+      mkdir("photos/$car_id");
     }
+    
+    // Upload files only if all photos are valid
+    $photo_basename_sanitized = sanitizeString(basename($photos[0]["name"]));
+    $photo_temp_name_sanitized = sanitizeString($photos[0]["tmp_name"]);
+    imageResize($photo_temp_name_sanitized, 90, "index_" . $photo_basename_sanitized, $car_id);
+    insertIntoDatabase("index_" . $photo_basename_sanitized, $car_id, $db);
+    imageResize($photo_temp_name_sanitized, 309, "featured_" . $photo_basename_sanitized, $car_id);
+    insertIntoDatabase("featured_" . $photo_basename_sanitized, $car_id, $db);
 
-    // // Check file size
-    // if ($_FILES["photo"]["size"] > 500000) {
-    //     echo "Sorry, your file is too large.";
-    //     $uploadOk = 0;
-    // }
+    // upload thumbnail photos
+   for ($i=1; $i < count($photos); $i++) { 
+    $photo_basename_sanitized = sanitizeString(basename($photos[$i]["name"]));
+    $photo_temp_name_sanitized = sanitizeString($photos[$i]["tmp_name"]);
+    imageResize($photo_temp_name_sanitized, 72, "thumbnail_" . $photo_basename_sanitized, $car_id);
+    insertIntoDatabase("thumbnail_" . $photo_basename_sanitized, $car_id, $db);
+   }
+  }
+
+  function insertIntoDatabase($photo, $car_id, $db) {
+    $query_insert_photo = "INSERT INTO photo (CarId, Name) values (:CarId, :Name)";
+    $statement = $db->prepare($query_insert_photo);
+    $bind_values = [':CarId' => $car_id, ':Name' => $photo];
+    $statement->execute($bind_values);
   }
 
   function reArrayFiles($file_post) {

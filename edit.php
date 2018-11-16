@@ -18,7 +18,7 @@
   $statement->execute(); 
   $car = $statement->fetch();
 
-  $select_photos_query = 'SELECT Name FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = ' . $id;
+  $select_photos_query = "SELECT Name FROM Photo p, Car c WHERE p.CarId = c.Id AND c.Id = {$id} AND p.Name LIKE 'thumbnail_%'";
   $statement = $db->prepare($select_photos_query);
   $statement->execute();
   $photos = $statement->fetchAll();
@@ -54,21 +54,9 @@
 
         // Deletes all files in directory
         array_map('unlink', glob("photos/$id/*"));
-      } else {
-        mkdir("photos/$id"); // Create directory with the id of the new car
       }
     
-      foreach ($_FILES['photo']['name'] as $photo) {
-        $sanitized_photo_name = sanitizeString($photo);
-
-        // Move car photos to the directory with its id
-        rename("photos/$sanitized_photo_name", "photos/" . $id . "/" . $sanitized_photo_name);
-        
-        $query_insert_photo = "INSERT INTO photo (CarId, Name) values (:CarId, :Name)";
-        $statement = $db->prepare($query_insert_photo);
-        $bind_values = [':CarId' => $id, ':Name' => $sanitized_photo_name];
-        $statement->execute($bind_values);
-      }
+      uploadPhoto($id);
     }
   }
 
@@ -94,7 +82,6 @@
 
       try {
         if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
-          uploadPhoto();
           updateData($updated_car, $db, $id, $photos, true);
         } else {
           updateData($updated_car, $db, $id);
@@ -190,10 +177,11 @@
             <!-- Start Car photos section -->
             <div class="row justify-content-center" id="photo-section">
               <div class="col-sm-8" id="car-photo-featured-section">
-                <?php if($photos): ?>
-                  <img class="img-fluid" id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photos[0]["Name"] ?>" alt="<?= $photos[0]["Name"] ?>">
+                <?php $photo = getPhoto($car["Id"], $db, "featured_"); ?>
+                <?php if($photo): ?>
+                  <img class="img-fluid" id="car-photo-featured" src="photos/<?= $car["Id"] ?>/<?= $photo["Name"] ?>" alt="<?= $photo["Name"] ?>">
                 <?php else: ?>
-                  <img src="photos/image-placeholder.png" alt="No car image available" id='car-photo-featured'>
+                  <img src="photos/image-placeholder.png" alt="No car image available" id="car-photo-featured" class='image-placeholder-size'>
                 <?php endif; ?>
                 <?php if($photo_error): ?>
                   <span class='error'>Error: <?= $photo_error ?></span>
@@ -201,8 +189,8 @@
               </div>
               <div class="col-sm-4" id="photo-thumbnail">
                 <?php if($photos): ?>
-                  <?php for ($i=1; $i < count($photos); $i++): ?>
-                    <img class="img-fluid car-photos" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
+                  <?php for ($i=0; $i < count($photos); $i++): ?>
+                    <img class="img-fluid" src="photos/<?= $car["Id"] ?>/<?= $photos[$i]["Name"] ?>" alt="<?= $photos[$i]["Name"] ?>">
                   <?php endfor; ?>
                 <?php endif; ?>
               </div>

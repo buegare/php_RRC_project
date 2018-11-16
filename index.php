@@ -86,11 +86,11 @@
         <div id="car-list">
           <?php foreach ($cars as $car): ?>
             <?php
-              $photo = getPhoto($car["Id"], $db);
+              $photo = getPhoto($car["Id"], $db, "index_");
               if($photo["Name"]) {
                 $car_photo = "<img src='photos/{$car["Id"]}/{$photo["Name"]}' alt='{$photo["Name"]}' class='car-photo'>";
               } else {
-                $car_photo = "<img src='photos/image-placeholder.png' alt='No car image available' class='car-photo'>";
+                $car_photo = "<img src='photos/image-placeholder.png' alt='No car image available' class='image-placeholder-size'>";
               }
             ?>
             <div class='row car-line'>

@@ -15,13 +15,13 @@
   border-top-right-radius: 5px;
 }
 
-#car-photo-featured {
-  width: 420px;
+.car-photos {
+  width: 98px;
+  padding: 2px;
 }
 
-.car-photos {
-  width: 96px;
-  padding: 1px;
+#image-placeholder-size {
+  height: 309px;
 }
 
 #photo-section {

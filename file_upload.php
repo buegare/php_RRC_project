@@ -1,5 +1,17 @@
 <?php
-  
+  require 'vendor/gumlet/php-image-resize/lib/ImageResize.php';
+
+  use Gumlet\ImageResize;
+  use Gumlet\ImageResizeException;
+
+  function imageResize($original_image, $size, $new_filename) {
+    echo "Original image {$original_image} <br>";
+    echo "new file name {$new_filename} <br>";
+    $image = new ImageResize($original_image);
+    $image->resizeToHeight($size);
+    $image->save('photos/' . $new_filename);
+  }
+
   function uploadPhoto() {
     $target_dir = "photos/";
     $allowed_file_extensions = ['jpg', 'jpeg', 'png'];
@@ -27,9 +39,13 @@
       }
     }
 
+    // Upload files only if all photos are valid
     foreach ($photos as $photo) {
       $target_file = $target_dir . basename($photo["name"]);
-      move_uploaded_file($photo["tmp_name"], $target_file);
+      // move_uploaded_file($photo["tmp_name"], $target_file);
+      imageResize($photo["tmp_name"], 90, "index_" . basename($photo["name"]));
+      imageResize($photo["tmp_name"], 309, "featured_" . basename($photo["name"]));
+      imageResize($photo["tmp_name"], 72, "thumbnail_" . basename($photo["name"]));
     }
 
     // // Check file size

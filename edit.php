@@ -23,7 +23,14 @@
   $statement->execute();
   $photos = $statement->fetchAll();
 
-  function updateData($car, $db, $id, $uploadPhoto = false) {
+  function deleteAllPhotos($db, $id) {
+    $query_delete_photos = "DELETE FROM Photo WHERE CarId = :id";
+    $statement = $db->prepare($query_delete_photos);
+    $statement->bindValue(':id', $id, PDO::PARAM_INT);
+    $statement->execute();
+  }
+
+  function updateData($car, $db, $id, $photos = null, $uploadPhoto = false) {
     $query = "UPDATE car SET Description=?, Make=?, Mileage=?, Model=?, Price=?, VideoUrl=?, 
                 Year=? WHERE id=? LIMIT 1";
     $statement = $db->prepare($query);
@@ -31,13 +38,19 @@
       $car['description'], $car['make'], $car['mileage'], $car['model'], $car['price'],
       $car['video-url'], $car['year'], $id
     ]);
+
+    if(isset($_POST["delete_photos"])) {
+      deleteAllPhotos($db, $id);
+
+      // Deletes all files in directory
+      array_map('unlink', glob("photos/$id/*"));
+      // Deletes directory
+      rmdir("photos/$id");
+    }
         
     if($uploadPhoto) {
       if($photos) { // Check if car has photos
-        $query_delete_photos = "DELETE FROM Photo WHERE CarId = :id";
-        $statement = $db->prepare($query_delete_photos);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->execute();
+        deleteAllPhotos($db, $id);
 
         // Deletes all files in directory
         array_map('unlink', glob("photos/$id/*"));
@@ -82,11 +95,11 @@
       try {
         if(isset($_FILES['photo']) && $_FILES['photo']['name'][0]) {
           uploadPhoto();
-          updateData($updated_car, $db, $id, true);
+          updateData($updated_car, $db, $id, $photos, true);
         } else {
           updateData($updated_car, $db, $id);
         }
-        redirectTo('index.php');
+        redirectTo("show.php?id={$id}");
       } catch (Exception $e) {
         $photo_error = $e->getMessage();
       }
@@ -202,6 +215,11 @@
                 <span>
                   <strong>Mileage: </strong><input autocomplete="off" type="number" name="mil" id="mil" value="<?= $car["Mileage"] ?>"> km
                 </span>
+                <?php if($photos): ?>
+                  <div>
+                    <input type="checkbox" name="delete_photos" value="true"> Delete all photos<br>
+                  </div>
+                <?php endif; ?>
                 <div>
                   <input type="file" class="form-control-file" name="photo[]" id="photo" multiple>
                 </div>

@@ -8,10 +8,10 @@
   <?php foreach ($css_files as $css) {
     echo "<link rel='stylesheet' href='styles/{$css}'>";
   }?>
-  <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-  <script src="vendor/twbs/bootstrap/site/docs/4.1/assets/js/vendor/jquery-slim.min.js"></script>
-  <script src="vendor/twbs/bootstrap/site/docs/4.1/assets/js/vendor/popper.min.js"></script>
-  <script src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="public/assets/bootstrap.min.css">
+  <script src="public/assets/jquery-slim.min.js"></script>
+  <script src="public/assets/popper.min.js"></script>
+  <script src="public/assets/bootstrap.min.js"></script>
   <?php if ($js_file) {
     echo "<script src='js/{$js_file}'></script>";
   }?>

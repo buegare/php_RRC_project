@@ -6,9 +6,9 @@
   }
 
   // Find user in the database
-  function findUser($username) {
+  function findUser($admin_username) {
     require 'connect.php';
-    $select_query = "SELECT Name FROM User WHERE Name = '$username' LIMIT 1";
+    $select_query = "SELECT Name FROM User WHERE Name = '$admin_username' LIMIT 1";
     $statement = $db->prepare($select_query);
     $statement->execute();
     $user = $statement->fetch();
@@ -17,7 +17,6 @@
 
   if($_POST) {
     $sanitized_user = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  
     $user = findUser($sanitized_user);
 
     if($user) {

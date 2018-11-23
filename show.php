@@ -23,7 +23,6 @@
 
 <?php $js_file = null; $css_files = ["show.css"]; include("template/header.php"); ?>
 
-<body>
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
@@ -39,15 +38,11 @@
                   Delete
                 </button>
                 <div>
-                  <a href="edit.php?id=<?= $car["Id"] ?>">
-                    <button type="button" class="btn btn-primary">Edit</button>
-                  </a>
-                  <a href="index.php">
-                    <button type="button" class="btn btn-secondary">Cancel</button>
-                  </a>
+                  <a class="btn btn-primary" href="edit.php?id=<?= $car["Id"] ?>">Edit</a>
+                  <a class="btn btn-secondary" href="index.php">Cancel</a>
                 </div>
                 <!-- Modal -->
-                <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModalTitle<?= $car["Id"] ?>" aria-hidden="true">
+                <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModal<?= $car["Id"] ?>" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -63,9 +58,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <a href='delete.php?id=<?= $car["Id"] ?>'>
-                          <button type="button" class="btn btn-danger">Delete</button>
-                        </a>
+                        <a class="btn btn-danger" href='delete.php?id=<?= $car["Id"] ?>'>Delete</a>
                       </div>
                     </div>
                   </div>

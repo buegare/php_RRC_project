@@ -97,7 +97,6 @@
 
 <?php $js_file = "edit.js"; $css_files = ["show.css", "edit.css"]; include("template/header.php"); ?>
 
-<body>
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
@@ -134,13 +133,8 @@
             <!-- Start buttons -->
             <div class="row">
               <div class="col-sm-12 d-flex justify-content-between" id="buttons">
-                <a href="update.php?id=<?= $car["Id"] ?>">
-                  <button type="submit" class="btn btn-success">Update Changes</button>
-                </a>
-                
-                <a href="show.php?id=<?= $car["Id"] ?>">
-                  <button type="button" class="btn btn-secondary">Cancel</button>
-                </a>
+                <a class="btn btn-success" href="update.php?id=<?= $car["Id"] ?>">Update Changes</a>
+                <a class="btn btn-secondary" href="show.php?id=<?= $car["Id"] ?>">Cancel</a>
               </div>
             </div>
             <!-- End buttons -->
@@ -208,7 +202,7 @@
                 <strong>Description</strong>
               </div>
               <div class="col-sm-12" id="description-body">
-                  <p><textarea placeholder="There is no description for this car. Type one here" name="desc" id="desc"><?= $car["Description"] ?></textarea></p>
+                <p><textarea placeholder="There is no description for this car. Type one here" name="desc" id="desc"><?= $car["Description"] ?></textarea></p>
               </div>
             </div>
             <!-- End description section -->
@@ -233,6 +227,7 @@
           </form>
 
         <?php endif; ?>
+      </div>
     </div>
   </div>
 </body>

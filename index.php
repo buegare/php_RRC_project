@@ -15,18 +15,13 @@
 
   <div class='container'>
     <header class='row'>
-      <div class='col-sm-2'>Geske Automotive Group</div>
-      <div class='col-sm-8'>
-        <ul id='header-car-filter'>
-          <li>Ford</li>
-          <li>Honda</li>
-          <li>Toyota</li>
-          <li>Chevrolet</li>
-        </ul>
-      </div>
+      <div class='col-sm-8'>Geske Automotive Group</div>
       <?php if(userLoggedIn()): ?>
         <div class='col-sm-1'>
           <a href='new_car.php' class='logged-user-links'>New Car</a>
+        </div>
+        <div class='col-sm-2'>
+          <a href='manage_users.php' class='logged-user-links'>Manage Users</a>
         </div>
         <div class='col-sm-1'>
           <a href='logout.php' class='logged-user-links'>Logout</a>
@@ -96,7 +91,7 @@
                 </p>
                 <p><strong>Mileage</strong> <?= $car["Mileage"] ?> km</p>
               </div>
-              <div class='col-sm-2' id="car-price">
+              <div class='col-sm-2 car-price'>
                 <strong>$<?= $car["Price"] ?></strong>
                 <?php if(userLoggedIn()): ?>
                   <!-- Button trigger modal -->
@@ -105,11 +100,11 @@
                   </button>
 
                   <!-- Modal -->
-                  <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModalTitle<?= $car["Id"] ?>" aria-hidden="true">
+                  <div class="modal fade" id="deleteCarModal<?= $car["Id"] ?>" tabindex="-1" role="dialog" aria-labelledby="deleteCarModal<?= $car["Id"] ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this car?</h5>
+                          <h5 class="modal-title">Are you sure you want to delete this car?</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -120,9 +115,10 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <a href='delete.php?id=<?= $car["Id"] ?>'>
+                          <!-- <a href='delete.php?id=<?= $car["Id"] ?>'>
                             <button type="button" class="btn btn-danger">Delete</button>
-                          </a>
+                          </a> -->
+                          <a class="btn btn-danger" href='delete.php?id=<?= $car["Id"] ?>'>Delete</a>
                         </div>
                       </div>
                     </div>

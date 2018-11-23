@@ -61,9 +61,7 @@
 
 <?php $js_file = "new_car.js"; $css_files = ["show.css", "edit.css"]; include("template/header.php"); ?>
 
-<body>
-<pre><?php print_r($_POST)?></pre>
-<pre><?php print_r($_FILES)?></pre>
+
   <div class="container">
     <div class="row" id="wrapper">
       <div class="col-sm-12">
@@ -99,9 +97,7 @@
             <div class="col-sm-12 d-flex justify-content-between" id="buttons">
               <button type="submit" id="submit" class="btn btn-success">Register Car</button>
               
-              <a href="index.php">
-                <button type="button" class="btn btn-secondary">Cancel</button>
-              </a>
+              <a class="btn btn-secondary" href="index.php">Cancel</a>
             </div>
           </div>
           <!-- End buttons -->
@@ -170,7 +166,7 @@
             </div>
             <div class="col-sm-12" id="video-review-body">
               <div class="embed-responsive embed-responsive-4by3">
-                <iframe id="video-review-iframe" class="embed-responsive-item" src="" allowfullscreen></iframe>
+                <iframe id="video-review-iframe" class="embed-responsive-item" src="about:blank" allowfullscreen></iframe>
               </div>
             </div>
           </div>

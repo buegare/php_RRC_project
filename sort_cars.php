@@ -54,7 +54,7 @@
     echo "</p>";
     echo "<p><strong>Mileage</strong> {$car["Mileage"]} km</p>";
     echo "</div>";
-    echo "<div class='col-sm-2' id='car-price'>";
+    echo "<div class='col-sm-2 car-price'>";
     echo "<strong>$ {$car["Price"]}</strong>";
     if(userLoggedIn()) {
       echo "<!-- Button trigger modal -->";

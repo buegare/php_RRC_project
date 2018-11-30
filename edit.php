@@ -133,8 +133,8 @@
             <!-- Start buttons -->
             <div class="row">
               <div class="col-sm-12 d-flex justify-content-between" id="buttons">
-                <a class="btn btn-success" href="update.php?id=<?= $car["Id"] ?>">Update Changes</a>
-                <a class="btn btn-secondary" href="show.php?id=<?= $car["Id"] ?>">Cancel</a>
+                  <button type="submit" class="btn btn-success">Update Changes</button>
+                  <a class="btn btn-secondary" href="show.php?id=<?= $car["Id"] ?>">Cancel</a>
               </div>
             </div>
             <!-- End buttons -->

@@ -24,7 +24,11 @@ const preview_images = () => {
     photo_section.removeChild(photo_section.firstChild);
   }
 
-  document.getElementsByClassName("error")[0].remove();
+  let error = document.getElementsByClassName("error")[0];
+
+  if (error) {
+    error.remove();
+  }
 
   //Append uploaded featured car photo
   $("#car-photo-featured-section").append(
